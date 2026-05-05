@@ -1,0 +1,62 @@
+body {
+  font-family: Arial;
+  background: #f5f5f5;
+  text-align: center;
+}
+
+.box {
+  background: white;
+  padding: 30px;
+  margin: 100px auto;
+  width: 300px;
+  border-radius: 10px;
+}
+
+input {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+}
+
+button {
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.dashboard {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+}
+
+.controls {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+
+#heatmapContainer {
+  text-align: center;
+}
+
+#legend {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-size: 14px;
+}
+
+.legend-box {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+}
+
+.critical { background: red; }
+.high { background: orange; }
+.medium { background: yellow; }
+.controlled { background: green; }

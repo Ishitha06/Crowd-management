@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Prediction</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h2>Prediction Dashboard</h2>
+
+<div class="dashboard">
+
+  <!-- HEATMAP -->
+  <div class="heatmap">
+    <!-- <img id="heatmap" width="400"> -->
+     <div id="heatmapContainer">
+  <img id="heatmap" />
+
+  <!-- LEGEND BELOW -->
+  <div id="legend">
+    <div><span class="legend-box critical"></span> CRITICAL</div>
+    <div><span class="legend-box high"></span> HIGH</div>
+    <div><span class="legend-box medium"></span> MEDIUM</div>
+    <div><span class="legend-box controlled"></span> CONTROLLED</div>
+  </div>
+</div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <h3>Stop Zones</h3>
+    <div id="zoneButtons"></div>
+
+    <button onclick="update()">UPDATE</button>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
