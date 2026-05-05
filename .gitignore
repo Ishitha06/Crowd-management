@@ -141,3 +141,21 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# ======================
+# Python / ML (ADD THIS)
+# ======================
+__pycache__/
+*.pyc
+*.pyo
+
+# ML model files (VERY IMPORTANT)
+*.pkl
+
+# Virtual environment
+venv/
+.env/
+
+# OS files
+.DS_Store
+Thumbs.db
