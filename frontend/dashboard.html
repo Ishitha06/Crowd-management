@@ -3,38 +3,193 @@
 <head>
   <title>Prediction</title>
   <link rel="stylesheet" href="style.css">
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      background: #eef1fb;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 1100px;
+    }
+
+    h2 {
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 18px;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1.45fr 360px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .panel {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(16px);
+      border-radius: 24px;
+      padding: 26px;
+      box-shadow:
+        0 1px 2px rgba(0,0,0,0.04),
+        0 8px 32px rgba(99,102,241,0.10),
+        0 32px 64px rgba(0,0,0,0.07);
+    }
+
+    #heatmapContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+
+    #heatmap {
+      width: 100%;
+      max-width: 620px;
+      border-radius: 16px;
+      background: #f8fafc;
+      min-height: 320px;
+      object-fit: contain;
+    }
+
+    #legend {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 18px;
+      font-size: 0.82rem;
+      color: #4b5563;
+      justify-content: center;
+    }
+
+    #legend div {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+    }
+
+    .legend-box {
+      width: 12px;
+      height: 12px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .critical { background: #dc2626; }
+    .high { background: #f97316; }
+    .medium { background: #facc15; }
+    .controlled { background: #22c55e; }
+
+    .controls h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 14px;
+    }
+
+    #zoneButtons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    #zoneButtons button {
+      padding: 9px 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      background: #f9fafb;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: 0.2s ease;
+    }
+
+    #zoneButtons button:hover {
+      border-color: #6366f1;
+      background: #eef2ff;
+    }
+
+    .controls > button {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      border: none;
+      border-radius: 11px;
+      color: #ffffff;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(99,102,241,0.35);
+      transition: transform 0.15s ease;
+    }
+
+    .controls > button:hover {
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 900px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<h2>Prediction Dashboard</h2>
+<div class="wrapper">
+  <h2>Prediction Dashboard</h2>
 
-<div class="dashboard">
+  <div class="dashboard">
 
-  <!-- HEATMAP -->
-  <div class="heatmap">
-    <!-- <img id="heatmap" width="400"> -->
-     <div id="heatmapContainer">
-  <img id="heatmap" />
+    <div class="panel heatmap">
+      <div id="heatmapContainer">
+        <img id="heatmap" />
 
-  <!-- LEGEND BELOW -->
-  <div id="legend">
-    <div><span class="legend-box critical"></span> CRITICAL</div>
-    <div><span class="legend-box high"></span> HIGH</div>
-    <div><span class="legend-box medium"></span> MEDIUM</div>
-    <div><span class="legend-box controlled"></span> CONTROLLED</div>
+        <div id="legend">
+          <div><span class="legend-box critical"></span> CRITICAL</div>
+          <div><span class="legend-box high"></span> HIGH</div>
+          <div><span class="legend-box medium"></span> MEDIUM</div>
+          <div><span class="legend-box controlled"></span> CONTROLLED</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel controls">
+      <h3>Stop Zones</h3>
+      <div id="zoneButtons"></div>
+
+      <button onclick="update()">UPDATE</button>
+    </div>
+
   </div>
 </div>
-  </div>
 
-  <!-- CONTROLS -->
-  <div class="controls">
-    <h3>Stop Zones</h3>
-    <div id="zoneButtons"></div>
+<script>
+  const zoneButtons = document.getElementById('zoneButtons');
 
-    <button onclick="update()">UPDATE</button>
-  </div>
-
-</div>
+  zoneButtons.addEventListener('click', function(e) {
+    if (e.target.tagName === 'BUTTON') {
+      e.target.classList.toggle('active');
+    }
+  });
+</script>
 
 <script src="script.js"></script>
 </body>
