@@ -5,17 +5,17 @@ function register() {
   const c = document.getElementById("regConfirm").value.trim();
 
   if (!u || !p || !c) {
-    alert("Fill all fields");
+    showToast("Fill all fields", "error");
     return;
   }
 
   if (p !== c) {
-    alert("Passwords do not match");
+    showToast("Passwords do not match", "error");
     return;
   }
 
   localStorage.setItem("user", JSON.stringify({ username: u, password: p }));
-  alert("Registered Successfully");
+  showToast("Registered Successfully", "success");
 }
 
 
@@ -27,9 +27,14 @@ function login() {
   const user = JSON.parse(localStorage.getItem("user"));
 
   if (user && user.username === u && user.password === p) {
-    window.location.href = "form.html";
+    showToast("Login Successful", "success");
+
+    setTimeout(() => {
+      window.location.href = "form.html";
+    }, 1000);
+
   } else {
-    alert("Invalid login");
+    showToast("Invalid login", "error");
   }
 }
 
@@ -44,9 +49,8 @@ async function initialize() {
     .map(num => Number(num.trim()))
     .filter(num => !isNaN(num));
 
-  // 🔥 VALIDATION FIX
   if (capacity.length !== Number(zones)) {
-    alert("Capacity count must match number of zones");
+    showToast("Capacity count must match number of zones", "error");
     return;
   }
 
@@ -65,16 +69,19 @@ async function initialize() {
     const data = await res.json();
 
     if (!res.ok) {
-      alert("Backend error: " + JSON.stringify(data));
+      showToast("Backend error", "error");
       return;
     }
 
-    alert("Database Linked Successfully");
-    window.location.href = "dashboard.html";
+    showToast("Database Linked Successfully", "success");
+
+    setTimeout(() => {
+      window.location.href = "dashboard.html";
+    }, 1000);
 
   } catch (err) {
     console.log(err);
-    alert("Server not reachable");
+    showToast("Server not reachable", "error");
   }
 }
 
@@ -93,29 +100,24 @@ async function loadZones() {
     zones.forEach(z => {
       const btn = document.createElement("button");
 
-      // TEXT
-      btn.innerText = `STOP ${z.zone_id}`;
+      if (z.blocked || z.risk === "BLOCKED") {
+        btn.innerText = `BLOCKED ${z.zone_id}`;
+        btn.style.background = "#9ca3af";
+        btn.disabled = true;
+        btn.style.cursor = "not-allowed";
+      } else {
+        btn.innerText = `STOP ${z.zone_id}`;
+        btn.style.background = "#ff9933";
+        btn.style.cursor = "pointer";
+        btn.onclick = () => stopZone(z.zone_id);
+      }
 
-      // 🎨 COLOR BASED ON RISK
-    //   if (z.risk === "CRITICAL") btn.style.background = "#e60000";   // deep red
-    //   else if (z.risk === "HIGH") btn.style.background = "#ff8000";  // orange
-    //   else if (z.risk === "MEDIUM") btn.style.background = "#ffd633"; // yellow
-    //   else btn.style.background = "#4CAF50"; // green (controlled)
-
-    // ✅ SAME COLOR FOR ALL BUTTONS
-btn.style.background = "#ff9933";   // or any color you like
-btn.style.color = "black";
-
-      // STYLE
       btn.style.color = "black";
       btn.style.margin = "8px";
       btn.style.padding = "10px 16px";
       btn.style.border = "none";
       btn.style.borderRadius = "6px";
-      btn.style.cursor = "pointer";
       btn.style.fontWeight = "bold";
-
-      btn.onclick = () => stopZone(z.zone_id);
 
       container.appendChild(btn);
     });
@@ -159,9 +161,8 @@ async function stopZone(zone_id) {
       body: JSON.stringify({ zone_id })
     });
 
-    alert(zone_id + " blocked");
+    showToast(zone_id + " blocked", "info");
 
-    // refresh only buttons (not heatmap)
     loadZones();
 
   } catch (err) {
@@ -171,9 +172,18 @@ async function stopZone(zone_id) {
 
 
 // ================= UPDATE BUTTON =================
-function update() {
-  loadZones();
-  loadHeatmap();
+async function update() {
+  try {
+    await fetch("http://127.0.0.1:5000/api/event/reset-blocks", {
+      method: "POST"
+    });
+
+    loadZones();
+    loadHeatmap();
+
+  } catch (err) {
+    console.log("RESET ERROR:", err);
+  }
 }
 
 
@@ -184,3 +194,20 @@ window.onload = () => {
     loadHeatmap();
   }
 };
+
+
+// ================= TOAST =================
+function showToast(message, type = "info") {
+  const container = document.getElementById("toastContainer");
+  if (!container) return;
+
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.innerText = message;
+
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.remove();
+  }, 3000);
+}

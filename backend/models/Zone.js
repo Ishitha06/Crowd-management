@@ -5,7 +5,12 @@ const zoneSchema = new mongoose.Schema({
   zone_name: String,
   capacity: Number,
   current_count: Number,
-  entry_allowed: Boolean
+  entry_allowed: Boolean,
+  blocked: {
+  type: Boolean,
+  default: false,
+}
+  
 });
 
 module.exports = mongoose.model("Zone", zoneSchema);

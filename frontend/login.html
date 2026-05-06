@@ -4,6 +4,7 @@
   <title>CrowdSense AI</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+  <link rel="stylesheet" href="style.css"></link>
   <style>
   *, *::before, *::after{
     box-sizing:border-box;
@@ -46,6 +47,7 @@
   .hero{
     padding-right:10px;
     margin-top:-20px; /* ⬅️ move section slightly up */
+    text-align: left !important;
   }
 
   .eyebrow{
@@ -619,6 +621,10 @@ function animate(ts){
 
 requestAnimationFrame(animate);
 </script>
+
+<!-- POPUP -->
+
+<div id="toastContainer" class="toast-container"></div>
 
 </body>
 </html>

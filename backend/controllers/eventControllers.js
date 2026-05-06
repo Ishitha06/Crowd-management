@@ -124,11 +124,20 @@ exports.getZones = async (req, res) => {
       let density = z.current_count / z.capacity;
       density = Number(density.toFixed(2));
 
-      let risk = "CONTROLLED";
+    //   let risk = "CONTROLLED";
 
-      if (density >= 0.85) risk = "CRITICAL";
-      else if (density >= 0.65) risk = "HIGH";
-      else if (density >= 0.4) risk = "MEDIUM";
+    //   if (density >= 0.85) risk = "CRITICAL";
+    //   else if (density >= 0.65) risk = "HIGH";
+    //   else if (density >= 0.4) risk = "MEDIUM";
+
+    let risk = "CONTROLLED";
+
+if (z.blocked) {
+  risk = "BLOCKED";   // 🔥 ADD THIS
+}
+else if (density >= 0.85) risk = "CRITICAL";
+else if (density >= 0.65) risk = "HIGH";
+else if (density >= 0.4) risk = "MEDIUM";
 
       return {
         zone_id: z.zone_id,
@@ -136,7 +145,8 @@ exports.getZones = async (req, res) => {
         capacity: z.capacity,
         density,
         risk,
-        entry_allowed: z.entry_allowed
+        entry_allowed: z.entry_allowed,
+        blocked: z.blocked
       };
     });
 
@@ -155,56 +165,135 @@ exports.getHeatmap = async (req, res) => {
     let formatted = [];
 
     for (let z of zones) {
-      let entry = Math.floor(Math.random() * (z.capacity * 0.2));
-      let exit = Math.floor(Math.random() * (z.capacity * 0.2));
 
-      const behavior = Math.random();
+  // 🛑 STEP 1: SKIP BLOCKED ZONES
+  if (z.blocked) {
+    formatted.push({
+      zone_id: z.zone_id,
+      entry_rate: 0,
+      exit_rate: 0,
+      density: z.current_count / z.capacity
+    });
+    continue; // ❗ VERY IMPORTANT
+  }
 
-      // 🔥 KEY FIX: force all crowd scenarios
-      if (behavior < 0.25) {
-        // 🟥 crowd surge
-        entry += Math.floor(z.capacity * 0.1);
-      }
-      else if (behavior < 0.5) {
-        // 🟧 moderate
-      }
-      else if (behavior < 0.75) {
-        // 🟩 decreasing (CONTROLLED)
-        exit += Math.floor(z.capacity * 0.2);
-      }
-      else {
-        // 🟩 very low crowd (FORCED CONTROLLED)
-        z.current_count = Math.floor(Math.random() * (z.capacity * 0.3));
-      }
+  let entry = Math.floor(Math.random() * (z.capacity * 0.2));
+  let exit = Math.floor(Math.random() * (z.capacity * 0.2));
 
-      if (!z.entry_allowed) entry = 0;
+  const behavior = Math.random();
 
-      z.current_count += (entry - exit);
+  if (behavior < 0.25) {
+    entry += Math.floor(z.capacity * 0.1);
+  }
+  else if (behavior < 0.5) {
+    // normal
+  }
+  else if (behavior < 0.75) {
+    exit += Math.floor(z.capacity * 0.2);
+  }
+  else {
+    z.current_count = Math.floor(Math.random() * (z.capacity * 0.3));
+  }
 
-      // clamp values
-      if (z.current_count < 0) z.current_count = 0;
-      if (z.current_count > z.capacity) z.current_count = z.capacity;
+  if (!z.entry_allowed) entry = 0;
 
-      // 🔥 EXTRA PUSH to controlled
-      if (Math.random() < 0.3) {
-        z.current_count = Math.floor(Math.random() * (z.capacity * 0.3));
-      }
+  z.current_count += (entry - exit);
 
-      await z.save();
+  if (z.current_count < 0) z.current_count = 0;
+  if (z.current_count > z.capacity) z.current_count = z.capacity;
 
-      formatted.push({
-        zone_id: z.zone_id,
-        entry_rate: entry,
-        exit_rate: exit,
-        density: z.current_count / z.capacity
-      });
-    }
+  if (Math.random() < 0.3) {
+    z.current_count = Math.floor(Math.random() * (z.capacity * 0.3));
+  }
+
+  await z.save();
+
+  formatted.push({
+    zone_id: z.zone_id,
+    entry_rate: entry,
+    exit_rate: exit,
+    density: z.current_count / z.capacity
+  });
+}
+
+
+
+
+
+    // for (let z of zones) {
+    //   let entry = Math.floor(Math.random() * (z.capacity * 0.2));
+    //   let exit = Math.floor(Math.random() * (z.capacity * 0.2));
+
+    //   const behavior = Math.random();
+
+    //   // 🔥 KEY FIX: force all crowd scenarios
+    //   if (behavior < 0.25) {
+    //     // 🟥 crowd surge
+    //     entry += Math.floor(z.capacity * 0.1);
+    //   }
+    //   else if (behavior < 0.5) {
+    //     // 🟧 moderate
+    //   }
+    //   else if (behavior < 0.75) {
+    //     // 🟩 decreasing (CONTROLLED)
+    //     exit += Math.floor(z.capacity * 0.2);
+    //   }
+    //   else {
+    //     // 🟩 very low crowd (FORCED CONTROLLED)
+    //     z.current_count = Math.floor(Math.random() * (z.capacity * 0.3));
+    //   }
+
+    //   if (!z.entry_allowed) entry = 0;
+
+    //   z.current_count += (entry - exit);
+
+    //   // clamp values
+    //   if (z.current_count < 0) z.current_count = 0;
+    //   if (z.current_count > z.capacity) z.current_count = z.capacity;
+
+    //   // 🔥 EXTRA PUSH to controlled
+    //   if (Math.random() < 0.3) {
+    //     z.current_count = Math.floor(Math.random() * (z.capacity * 0.3));
+    //   }
+
+    //   await z.save();
+
+    //   formatted.push({
+    //     zone_id: z.zone_id,
+    //     entry_rate: entry,
+    //     exit_rate: exit,
+    //     density: z.current_count / z.capacity
+    //   });
+    // }
+
+    // const response = await axios.post("http://127.0.0.1:5001/predict", {
+    //   zones: formatted
+    // });
+
+    // res.json(response.data);
 
     const response = await axios.post("http://127.0.0.1:5001/predict", {
-      zones: formatted
-    });
+  zones: formatted
+});
 
-    res.json(response.data);
+let predictions = response.data.predictions;
+let risks = response.data.risk_levels;
+
+// 🔥 STEP 4: OVERRIDE BLOCKED ZONES HERE
+for (let i = 0; i < zones.length; i++) {
+  if (zones[i].blocked) {
+    risks[i] = "BLOCKED";   // override risk
+    predictions[i] = 0;     // optional (keeps UI stable)
+  }
+}
+
+// return modified result
+res.json({
+  predictions,
+  risk_levels: risks,
+  heatmap: response.data.heatmap
+});
+
 
   } catch (err) {
     console.log(err);
@@ -213,15 +302,37 @@ exports.getHeatmap = async (req, res) => {
 };
 
 // ================= BLOCK =================
+
 exports.blockZone = async (req, res) => {
   const { zone_id } = req.body;
 
-  await Zone.updateOne(
+  await Zone.findOneAndUpdate(
     { zone_id },
-    { entry_allowed: false }
+    { blocked: true }
   );
 
   res.json({ message: "Zone blocked" });
 };
 
 
+// exports.blockZone = async (req, res) => {
+//   const { zone_id } = req.body;
+
+//   await Zone.updateOne(
+//     { zone_id },
+//     { entry_allowed: false }
+//   );
+
+//   res.json({ message: "Zone blocked" });
+// };
+
+
+// ================= RESET BLOCKS =================
+exports.resetBlocks = async (req, res) => {
+  try {
+    await Zone.updateMany({}, { blocked: false });
+    res.json({ message: "All zones unblocked" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

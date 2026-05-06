@@ -5,7 +5,8 @@ const {
   initializeEvent,
   getZones,
   getHeatmap,
-  blockZone
+  blockZone,
+  resetBlocks
 } = require("../controllers/eventControllers");
 
 // ================= ROUTES =================
@@ -21,6 +22,8 @@ router.get("/heatmap", getHeatmap);
 
 // Block a zone
 router.post("/block", blockZone);
+
+router.post("/reset-blocks", resetBlocks);
 
 module.exports = router;
 
