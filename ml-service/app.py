@@ -55,7 +55,7 @@ def predict():
                 risks.append("CRITICAL")
             elif d >= 0.65:
                 risks.append("HIGH")
-            elif d >= 0.4:
+            elif d >= 0.25:
                 risks.append("MEDIUM")
             else:
                 risks.append("CONTROLLED")

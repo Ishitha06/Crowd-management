@@ -90,9 +90,17 @@
     button:hover {
       transform: translateY(-2px);
     }
+
+    canvas{
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
   </style>
 </head>
 <body>
+    <canvas id="crowd"></canvas>
 
 <div class="layout">
   <div class="box">
@@ -122,5 +130,162 @@
 </script>
 
 <script src="script.js"></script>
+
+<script>
+const canvas = document.getElementById('crowd');
+const ctx = canvas.getContext('2d');
+
+function resize(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+function rand(a, b){
+  return a + Math.random() * (b - a);
+}
+
+function drawWalkingHuman(phase, s, dir){
+  const legSwing = Math.sin(phase) * 18;
+  const armSwing = -Math.sin(phase) * 22;
+  const bodyBob = Math.abs(Math.sin(phase)) * (s * 0.4);
+
+  ctx.save();
+  if (dir === -1) ctx.scale(-1, 1);
+
+  const toRad = d => d * Math.PI / 180;
+  const bobY = bodyBob;
+
+  // head
+  ctx.beginPath();
+  ctx.ellipse(0, -s * 5.2 + bobY, s * 0.72, s * 0.82, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // neck
+  ctx.fillRect(-s * 0.2, -s * 4.35 + bobY, s * 0.4, s * 0.5);
+
+  // torso
+  ctx.beginPath();
+  ctx.moveTo(-s * 0.75, -s * 3.85 + bobY);
+  ctx.lineTo(s * 0.75, -s * 3.85 + bobY);
+  ctx.lineTo(s * 0.55, -s * 1.6 + bobY);
+  ctx.lineTo(-s * 0.55, -s * 1.6 + bobY);
+  ctx.closePath();
+  ctx.fill();
+
+  // left arm
+  ctx.save();
+  ctx.translate(-s * 0.72, -s * 3.7 + bobY);
+  ctx.rotate(toRad(-armSwing));
+  ctx.beginPath();
+  ctx.ellipse(-s * 0.18, s * 1.0, s * 0.28, s * 1.1, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // right arm
+  ctx.save();
+  ctx.translate(s * 0.72, -s * 3.7 + bobY);
+  ctx.rotate(toRad(armSwing));
+  ctx.beginPath();
+  ctx.ellipse(s * 0.18, s * 1.0, s * 0.28, s * 1.1, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // hips
+  ctx.beginPath();
+  ctx.ellipse(0, -s * 1.45 + bobY, s * 0.6, s * 0.35, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // left leg
+  ctx.save();
+  ctx.translate(-s * 0.35, -s * 1.2 + bobY);
+  ctx.rotate(toRad(-legSwing));
+  ctx.beginPath();
+  ctx.ellipse(0, s * 0.9, s * 0.32, s * 1.0, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.save();
+  ctx.translate(0, s * 1.8);
+  ctx.rotate(toRad(legSwing * 0.6));
+  ctx.beginPath();
+  ctx.ellipse(0, s * 0.8, s * 0.26, s * 0.95, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.translate(s * 0.05, s * 1.6);
+  ctx.beginPath();
+  ctx.ellipse(s * 0.2, 0, s * 0.55, s * 0.2, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+  ctx.restore();
+
+  // right leg
+  ctx.save();
+  ctx.translate(s * 0.35, -s * 1.2 + bobY);
+  ctx.rotate(toRad(legSwing));
+  ctx.beginPath();
+  ctx.ellipse(0, s * 0.9, s * 0.32, s * 1.0, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.save();
+  ctx.translate(0, s * 1.8);
+  ctx.rotate(toRad(-legSwing * 0.6));
+  ctx.beginPath();
+  ctx.ellipse(0, s * 0.8, s * 0.26, s * 0.95, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.translate(s * 0.05, s * 1.6);
+  ctx.beginPath();
+  ctx.ellipse(s * 0.2, 0, s * 0.55, s * 0.2, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+  ctx.restore();
+
+  ctx.restore();
+}
+
+const COUNT = 80;
+
+const people = Array.from({ length: COUNT }, () => {
+  const dir = Math.random() < 0.5 ? 1 : -1;
+  return {
+    x: rand(0, window.innerWidth),
+    y: rand(window.innerHeight * 0.12, window.innerHeight * 0.9),
+    speed: rand(0.25, 0.7),
+    dir,
+    s: rand(3.2, 5.6),
+    phase: rand(0, Math.PI * 2),
+    opacity: rand(0.4, 0.14),
+  };
+});
+
+let last = 0;
+
+function animate(ts){
+  const dt = Math.min(ts - last, 32) / 16;
+  last = ts;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  for (const p of people){
+    p.x += p.speed * p.dir * dt;
+    p.phase += 0.055 * dt;
+
+    if (p.x > canvas.width + 30) p.x = -30;
+    if (p.x < -30) p.x = canvas.width + 30;
+
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.globalAlpha = p.opacity;
+    ctx.fillStyle = '#4338ca';
+    drawWalkingHuman(p.phase, p.s, p.dir);
+    ctx.restore();
+  }
+
+  requestAnimationFrame(animate);
+}
+
+requestAnimationFrame(animate);
+</script>
 </body>
 </html>

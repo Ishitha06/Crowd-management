@@ -149,12 +149,35 @@
         grid-template-columns: 1fr;
       }
     }
+
+    .solution-btn {
+  padding: 13px 26px;   /* same height, controlled width */
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border: none;
+  border-radius: 11px;
+  color: #ffffff;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(99,102,241,0.35);
+  transition: transform 0.15s ease;
+
+  width: auto;          /* 🔥 FIX: not full width */
+  min-width: 220px;     /* nice button size */
+}
+
+.solution-btn:hover {
+  transform: translateY(-2px);
+}
   </style>
 </head>
 <body>
 
 <div class="wrapper">
-  <h2>Prediction Dashboard</h2>
+  <h1>Prediction Dashboard</h1>
+  <br>
+  <br>
+
 
   <div class="dashboard">
 
@@ -179,6 +202,16 @@
     </div>
 
   </div>
+
+  <br>
+  <br>
+
+
+  
+  <div style="margin-top: 20px; text-align: center;">
+  <button class="solution-btn" onclick="goToSolutions()">Show Solutions</button>
+</div>
+
 </div>
 
 <script>
@@ -192,5 +225,11 @@
 </script>
 
 <script src="script.js"></script>
+
+<script>
+  function goToSolutions() {
+    window.location.href = "solutions.html";
+  }
+</script>
 </body>
 </html>

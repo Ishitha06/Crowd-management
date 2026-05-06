@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Suggested Actions</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #eeeef8;
+      min-height: 100vh;
+      padding: 48px 40px;
+      color: #1a1a2e;
+    }
+
+    .page-header {
+      margin-bottom: 40px;
+    }
+
+    .page-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: #6366f1;
+      margin-bottom: 10px;
+    }
+
+    .page-title {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #0f0f1a;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+
+    .page-subtitle {
+      font-size: 0.95rem;
+      font-weight: 400;
+      color: #6b7280;
+    }
+
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 36px;
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 14px 20px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      width: fit-content;
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #ef4444;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .status-text {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #374151;
+      letter-spacing: 0.5px;
+    }
+
+    .status-zone {
+      font-size: 0.78rem;
+      color: #ef4444;
+      font-weight: 700;
+      background: #fef2f2;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      max-width: 960px;
+    }
+
+    .action-card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 28px 28px 24px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .action-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+
+    .card-number {
+      position: absolute;
+      top: 22px;
+      right: 24px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #6366f1;
+      letter-spacing: 1px;
+    }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+
+    .icon-red    { background: #fef2f2; }
+    .icon-blue   { background: #eff6ff; }
+    .icon-green  { background: #f0fdf4; }
+    .icon-orange { background: #fff7ed; }
+
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #0f0f1a;
+    }
+
+    .card-desc {
+      font-size: 0.85rem;
+      color: #6b7280;
+      line-height: 1.6;
+    }
+
+    .card-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      font-size: 0.82rem;
+      color: #374151;
+      font-weight: 500;
+    }
+
+    .step-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+
+    .dot-red    { background: #ef4444; }
+    .dot-blue   { background: #3b82f6; }
+    .dot-green  { background: #22c55e; }
+    .dot-orange { background: #f97316; }
+
+    .card-action-btn {
+      align-self: flex-start;
+      margin-top: 4px;
+      padding: 9px 20px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-red    { background: #fef2f2; color: #ef4444; }
+    .btn-blue   { background: #eff6ff; color: #3b82f6; }
+    .btn-green  { background: #f0fdf4; color: #16a34a; }
+    .btn-orange { background: #fff7ed; color: #f97316; }
+
+    .btn-red:hover    { background: #ef4444; color: #fff; }
+    .btn-blue:hover   { background: #3b82f6; color: #fff; }
+    .btn-green:hover  { background: #16a34a; color: #fff; }
+    .btn-orange:hover { background: #f97316; color: #fff; }
+
+    .priority-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 20px;
+      width: fit-content;
+    }
+
+    .badge-critical { background: #fef2f2; color: #ef4444; }
+    .badge-high     { background: #fff7ed; color: #f97316; }
+    .badge-medium   { background: #eff6ff; color: #3b82f6; }
+    .badge-advisory { background: #f0fdf4; color: #16a34a; }
+  </style>
+</head>
+<body>
+
+  <div class="page-header">
+    <p class="page-label">Crowd Sense AI</p>
+    <h1 class="page-title">Suggested Actions</h1>
+    <p class="page-subtitle">Real-time recommendations based on crowd density and risk classification.</p>
+  </div>
+
+  <div class="status-bar">
+    <div class="status-dot"></div>
+    <span class="status-text">Live Alert —</span>
+    <span class="status-zone">Zone 3 CRITICAL</span>
+    <span class="status-text">· Immediate response required</span>
+  </div>
+
+  <div class="actions-grid">
+
+    <!-- CARD 1 -->
+    <div class="action-card">
+      <span class="card-number">01</span>
+      <div class="card-icon icon-red">🚨</div>
+      <div class="priority-badge badge-critical">● Critical</div>
+      <div class="card-title">Deploy Task Force</div>
+      <div class="card-desc">Crowd density in Zone 3 has crossed the critical threshold. Immediate deployment of the security task force is recommended.</div>
+      <div class="card-steps">
+        <div class="step"><span class="step-dot dot-red"></span>Alert on-ground security personnel in Zone 3</div>
+        <div class="step"><span class="step-dot dot-red"></span>Activate crowd dispersal protocol</div>
+        <div class="step"><span class="step-dot dot-red"></span>Open emergency exit gates C and D</div>
+      </div>
+      <button class="card-action-btn btn-red">Dispatch Now</button>
+    </div>
+
+    <!-- CARD 2 -->
+    <div class="action-card">
+      <span class="card-number">02</span>
+      <div class="card-icon icon-blue">🏥</div>
+      <div class="priority-badge badge-high">● High Priority</div>
+      <div class="card-title">Notify Nearby Hospitals</div>
+      <div class="card-desc">Pre-alert medical facilities within a 5 km radius to prepare emergency capacity in case of crowd-related incidents.</div>
+      <div class="card-steps">
+        <div class="step"><span class="step-dot dot-blue"></span>Send alert to City General Hospital (2.1 km)</div>
+        <div class="step"><span class="step-dot dot-blue"></span>Notify St. Mary's Medical Centre (4.3 km)</div>
+        <div class="step"><span class="step-dot dot-blue"></span>Request 2 ambulances on standby at Gate A</div>
+      </div>
+      <button class="card-action-btn btn-blue">Send Alert</button>
+    </div>
+
+    <!-- CARD 3 -->
+    <div class="action-card">
+      <span class="card-number">03</span>
+      <div class="card-icon icon-orange">🚧</div>
+      <div class="priority-badge badge-medium">● Medium Priority</div>
+      <div class="card-title">Restrict Entry to Zone 3</div>
+      <div class="card-desc">Temporarily halt new entries into the high-density zone to allow natural crowd thinning and reduce pressure on the area.</div>
+      <div class="card-steps">
+        <div class="step"><span class="step-dot dot-orange"></span>Close entry checkpoints B2 and B3</div>
+        <div class="step"><span class="step-dot dot-orange"></span>Redirect incoming crowd to Zone 1 and Zone 2</div>
+        <div class="step"><span class="step-dot dot-orange"></span>Display signage and PA announcement</div>
+      </div>
+      <button class="card-action-btn btn-orange">Restrict Entry</button>
+    </div>
+
+    <!-- CARD 4 -->
+    <div class="action-card">
+      <span class="card-number">04</span>
+      <div class="card-icon icon-green">📢</div>
+      <div class="priority-badge badge-advisory">● Advisory</div>
+      <div class="card-title">Public Address Announcement</div>
+      <div class="card-desc">Broadcast a calm, clear message over the PA system to guide crowd movement and prevent panic-driven surges.</div>
+      <div class="card-steps">
+        <div class="step"><span class="step-dot dot-green"></span>Announce alternate routes to exits</div>
+        <div class="step"><span class="step-dot dot-green"></span>Request attendees to move to designated rest zones</div>
+        <div class="step"><span class="step-dot dot-green"></span>Play pre-recorded emergency guidance audio</div>
+      </div>
+      <button class="card-action-btn btn-green">Broadcast</button>
+    </div>
+
+  </div>
+
+</body>
+</html>
