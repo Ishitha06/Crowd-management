@@ -2,19 +2,124 @@
 <html>
 <head>
   <title>Event Setup</title>
-  <link rel="stylesheet" href="style.css">
+  <!-- <link rel="stylesheet" href="style.css"> -->
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #eef1fb;
+      padding: 24px;
+    }
+
+    .layout {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .box {
+      width: 100%;
+      max-width: 480px;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(16px);
+      border-radius: 24px;
+      padding: 36px 34px 30px;
+      box-shadow:
+        0 1px 2px rgba(0,0,0,0.04),
+        0 8px 32px rgba(99,102,241,0.10),
+        0 32px 64px rgba(0,0,0,0.07);
+    }
+
+    h2 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 0.88rem;
+      color: #6b7280;
+      margin-bottom: 22px;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px 16px;
+      margin-bottom: 14px;
+      background: #f9fafb;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      outline: none;
+      transition: 0.2s ease;
+    }
+
+    input:focus {
+      border-color: #6366f1;
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(99,102,241,0.08);
+    }
+
+    button {
+      width: 100%;
+      padding: 13px;
+      margin-top: 4px;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      border: none;
+      border-radius: 11px;
+      color: #ffffff;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(99,102,241,0.35);
+      transition: transform 0.15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+  </style>
 </head>
 <body>
 
-<div class="box">
-  <h2>Form (Event Details)</h2>
+<div class="layout">
+  <div class="box">
+    <h2>Form (Event Details)</h2>
+    <p class="subtitle">Configure event information before initializing the crowd monitoring database.</p>
 
-  <input type="text" id="eventName" placeholder="Event Name">
-  <input type="number" id="zones" placeholder="Number of Zones">
-  <input type="text" id="capacity" placeholder="Capacity (comma separated: 1000,1200,800)">
+    <input type="text" id="eventName" placeholder="Event Name">
+    <input type="number" id="zones" placeholder="Number of Zones">
+    <input type="text" id="capacity" placeholder="Capacity (comma separated: 1000,1200,800)">
 
-  <button onclick="initialize()">Link Database</button>
+    <button onclick="initialize()">Link Database</button>
+  </div>
 </div>
+
+<script>
+  document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('focus', () => {
+      input.setAttribute('data-active', 'true');
+    });
+
+    input.addEventListener('blur', () => {
+      if (!input.value.trim()) {
+        input.removeAttribute('data-active');
+      }
+    });
+  });
+</script>
 
 <script src="script.js"></script>
 </body>
